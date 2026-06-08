@@ -29,3 +29,58 @@ class BoardDAO:
         conn.close()
 
         return result
+    
+    def create_item(self, item):
+        conn = self.get_connection() 
+        cursor = conn.cursor()
+
+        sql = "insert into board (title, content, writer, password, reaction) values (%(title)s, %(content)s, %(writer)s, %(password)s, %(reaction)s)" # https://velog.io/@gjtang/pymysql-Insert-%EB%B0%A9%EB%B2%95
+        # cursor.execute(sql)
+        cursor.executemany(sql, item)
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+    def open_item(self, id):
+        conn = self.get_connection() 
+        cursor = conn.cursor() 
+
+        sql = "select * from board where id=%s"
+        cursor.execute(sql, (id,))
+        result = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        return result
+    
+    def add_reaction(self, id):
+        conn = self.get_connection() 
+        cursor = conn.cursor() 
+
+        sql = "select * from board where id=%s"
+        cursor.execute(sql, (id,))
+        result = cursor.fetchone()
+
+        sql = "update board set reaction=%s"
+        cursor.execute(sql, (int(result[7])+1,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+    
+    def delete_item(self, id):
+        conn = self.get_connection() 
+        cursor = conn.cursor() 
+
+        sql = "delete from board where id=%s"
+        cursor.execute(sql, (id,))
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+
+
+        
